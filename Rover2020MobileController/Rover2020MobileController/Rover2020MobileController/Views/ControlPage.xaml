@@ -6,15 +6,17 @@
              mc:Ignorable="d"
              x:Class="Rover2020MobileController.Views.ControlPage">
     <ContentPage.Content>
-        <Grid BackgroundColor="DarkSlateGray">
+        <Grid BackgroundColor="DarkSlateGray" ColumnSpacing="10" RowSpacing="20" Padding="20">
             <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="2*"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="1*"/>
@@ -24,14 +26,22 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <ListView BackgroundColor="Blue" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="3"/>
-            <Slider Grid.Row="1" Grid.Column="6" Grid.RowSpan="3" 
-                     
-
-
-                     Maximum="100" Minimum="1" 
-                     AnchorX="1" AnchorY="1" Rotation="-90"
-                     VerticalOptions="FillAndExpand"/>
+            <ListView BackgroundColor="Blue" Grid.Row="2" Grid.Column="3" Grid.RowSpan="3"/>
+            
+            <Button x:Name="powerButton" Text="Power Down Rover"
+                    Grid.Row="0" Grid.Column="3" Grid.RowSpan="3"/>
+            
+            <Label x:Name="speedLabel" Text="{Binding Speed}"
+                   Grid.Row="1" Grid.Column="8" HorizontalOptions="End" HorizontalTextAlignment="Start" />
+            
+            <Slider Grid.Row="1" Grid.Column="6" Grid.ColumnSpan="3"                      
+                    x:Name="speedSlider" Value="{Binding Speed, Mode=TwoWay}"
+                    ThumbColor="AntiqueWhite" 
+                    MinimumTrackColor="Green" 
+                    MaximumTrackColor="Red"
+                    Maximum="255" Minimum="0" 
+                    AnchorX="1" AnchorY="1" Rotation="-90"
+                    VerticalOptions="FillAndExpand"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>
