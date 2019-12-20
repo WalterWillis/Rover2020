@@ -24,6 +24,8 @@ namespace Rover2020MobileController.Views
         {
             InitializeComponent();
 
+            toolbarItem.Clicked += AddItem_Clicked;
+            ItemsListView.ItemSelected += OnItemSelected;
             BindingContext = viewModel = new ItemsViewModel();
         }
 

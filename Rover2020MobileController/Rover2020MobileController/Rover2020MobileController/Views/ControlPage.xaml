@@ -27,9 +27,14 @@
             </Grid.ColumnDefinitions>
 
             <ListView BackgroundColor="Blue" Grid.Row="2" Grid.Column="3" Grid.RowSpan="3"/>
-            
-            <Button x:Name="powerButton" Text="Power Down Rover"
-                    Grid.Row="0" Grid.Column="3" Grid.RowSpan="3"/>
+
+            <Frame x:Name="powerButtonFrame" Grid.Row="0" Grid.Column="3" Grid.RowSpan="3">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer NumberOfTapsRequired="2" x:Name="Recognizer" />
+                </Frame.GestureRecognizers>
+                
+                <Label Text="Power Down Rover"/>
+            </Frame>
             
             <Label x:Name="speedLabel" Text="{Binding Speed}"
                    Grid.Row="1" Grid.Column="8" HorizontalOptions="End" HorizontalTextAlignment="Start" />
