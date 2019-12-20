@@ -26,6 +26,8 @@ namespace Rover2020MobileController.Views
 
         public async Task NavigateFromMenu(int id)
         {
+            // If the page doesn't exist in the stack, add it. 
+            // This way, the content of each page is always loaded.
             if (!MenuPages.ContainsKey(id))
             {
                 switch (id)
@@ -35,6 +37,9 @@ namespace Rover2020MobileController.Views
                         break;
                     case (int)MenuItemType.About:
                         MenuPages.Add(id, new NavigationPage(new AboutPage()));
+                        break;
+                    case (int)MenuItemType.Control:
+                        MenuPages.Add(id, new NavigationPage(new ControlPage()));
                         break;
                 }
             }
