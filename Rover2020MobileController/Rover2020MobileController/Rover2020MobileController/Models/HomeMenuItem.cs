@@ -7,7 +7,8 @@ namespace Rover2020MobileController.Models
     public enum MenuItemType
     {
         Browse,
-        About
+        About,
+        Control
     }
     public class HomeMenuItem
     {
