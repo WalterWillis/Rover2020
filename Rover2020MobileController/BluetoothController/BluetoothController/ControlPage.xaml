@@ -1,0 +1,97 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="BluetoothController.ControlPage"
+        Title="ControlPage" Height="450" Width="800">
+    <Window.Content>
+        <Grid Background="DarkSlateGray" SnapsToDevicePixels="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height=".5*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <ComboBox Grid.Column="3" Grid.ColumnSpan="3"
+                    FontSize="12" x:Name="displayList" Margin="36,10,118,23" Grid.Row="1"/>
+
+            <Button x:Name="powerButton" Grid.Column="0" Grid.ColumnSpan="3" Margin="133,33,133,0" Grid.RowSpan="2">
+                <Button.Content>
+                    <TextBlock Text="Power Down Rover"/>
+                </Button.Content>
+            </Button>
+
+
+            <Label x:Name="speedLabel" Content="{Binding Speed}"
+                Grid.Row="0" Grid.Column="4" HorizontalAlignment="Left" HorizontalContentAlignment="Right"/>
+
+
+            <!--AnchorX="1" AnchorY="1" Rotation="-90"-->
+            <Button x:Name="upButton" Grid.Row="3" Grid.Column="1">
+                <Button.Content>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            FORWARD
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Button.Content>
+            </Button>
+            <Button x:Name="leftButton" Grid.Row="4" Grid.Column="0">
+                <Button.Content>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            LEFT
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Button.Content>
+            </Button>
+            <Button x:Name="rightButton"  Grid.Row="4" Grid.Column="2">
+                <Button.Content>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            RIGHT
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Button.Content>
+            </Button>
+            <Button x:Name="downButton"  Grid.Row="5" Grid.Column="1">
+                <Button.Content>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            BACKWARD
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Button.Content>
+            </Button>
+            <Button x:Name="speedIncreaseButton" Grid.Column="5" Margin="61,7,44,7">
+                <TextBlock>
+                    <TextBlock.Text>+</TextBlock.Text>
+                </TextBlock>
+            </Button>
+            <Slider Orientation="Vertical"                  
+                        x:Name="speedSlider" Value="{Binding Speed, Mode=TwoWay}"
+                        Maximum="255" Minimum="0" Grid.Column="5" Margin="66,33,49,60" Grid.RowSpan="7" />
+            <Button x:Name="speedDecreaseButton"  Grid.Column="5" Margin="61,19,44,30" Grid.Row="6">
+                <TextBlock>
+                    <TextBlock.Text>-</TextBlock.Text>
+                </TextBlock>
+            </Button>
+            
+            <ComboBox Grid.Column="3" Grid.ColumnSpan="3"
+                FontSize="12" x:Name="deviceList" Margin="36,0,118,34" Grid.Row="3"/>
+        </Grid>
+    </Window.Content>
+</Window>
