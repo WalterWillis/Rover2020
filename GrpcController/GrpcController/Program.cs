@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace GrpcGreeter
+namespace GrpcController
 {
     public class Program
     {
@@ -21,14 +21,18 @@ namespace GrpcGreeter
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>().UseKestrel(options =>
+                    webBuilder.UseStartup<Startup>();
+                    if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development")
                     {
-                        options.ListenAnyIP(5443, listenOptions =>
+                        webBuilder.UseKestrel(options =>
                         {
-                            string certPath = Path.Combine("certs", "server.pfx");
-                            listenOptions.UseHttps(certPath, "1234");
+                            options.ListenAnyIP(5443, listenOptions =>
+                            {
+                                string certPath = Path.Combine("certs", "server.pfx");
+                                listenOptions.UseHttps(certPath, "1234");
+                            });
                         });
-                    });
+                    }
                 });    
     }
 }

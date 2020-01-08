@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace GrpcGreeter
+namespace GrpcController
 {
     public class Startup
     {
@@ -31,7 +31,7 @@ namespace GrpcGreeter
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<GreeterService>();
+                endpoints.MapGrpcService<ControllerService>();
 
                 endpoints.MapGet("/", async context =>
                 {

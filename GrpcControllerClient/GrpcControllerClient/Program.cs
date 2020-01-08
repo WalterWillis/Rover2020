@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using GrpcGreeter;
+using GrpcController;
 using Grpc.Net.Client;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 
-namespace GrpcGreeterClient
+namespace GrpcControllerClient
 {
     class Program
     {
@@ -24,14 +24,14 @@ namespace GrpcGreeterClient
             
             //Create the channel given our parameters
             var channel = GrpcChannel.ForAddress("https://MobileDestroyer:5443", new GrpcChannelOptions { HttpClient = httpClient });
-            var client = new Greeter.GreeterClient(channel);
+            var client = new Controller.ControllerClient(channel);
             while (!endProgram)
             {
                 try
                 {
-                    var reply = await client.SayHelloAsync(
-                                      new HelloRequest { Name = "GreeterClient", Direction = Direction.Forward });
-                    Console.WriteLine("Greeting: " + reply.Message);
+                    var reply = await client.MoveAsync(
+                                      new MoveRequest { Name = "Command Center", Direction = Direction.Forward });
+                    Console.WriteLine("Message Recieved " + reply.Message);
                 } 
                 //errors are likely due to a mishap in configuration, so ignore for debug
                 finally
