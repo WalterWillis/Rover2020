@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcController";
+
+package rover;
+
+// The greeting service definition.
+service Controller {
+  // Sends a move command. 
+  rpc Move (MoveRequest) returns (MoveReply);
+}
+
+ enum Direction {
+    FORWARD = 0;
+    BACKWARD = 1;
+    LEFT = 2;
+    RIGHT = 3;
+    HALT = 4;
+  }
+
+// The request message containing the user's name.
+message MoveRequest {
+  string name = 1;
+  Direction direction = 2; 
+}
+
+// The response message containing the greetings.
+message MoveReply {
+  string message = 1;
+}

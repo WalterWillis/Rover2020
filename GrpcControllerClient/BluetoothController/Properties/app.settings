@@ -1,0 +1,9 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ControllerUI.Properties" GeneratedClassName="app">
+  <Profiles />
+  <Settings>
+    <Setting Name="TargetURL" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">https://MobileDestroyer:5443</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
