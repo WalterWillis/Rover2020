@@ -11,14 +11,18 @@ namespace ControllerUI.ViewModels
 {
     public class ControllerViewModel : INotifyPropertyChanged
     {
-        private int speed;
+       
         private int min;
         private int max;
         private int speedIncrement = 10;
-        private List<string> displayVariants;
-        private List<string> devices;
         private Controller.ControllerClient client;
         private GrpcChannel channel;
+        private DateTime lastHeartbeat;
+        private int connectionDelay = 60; // how long between heartbeat calls
+
+        private List<string> displayVariants;
+        private List<string> devices;
+        private int speed;
         private Status connectionStatus;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -54,14 +58,22 @@ namespace ControllerUI.ViewModels
             //Create the channel given our parameters
             channel = GrpcChannel.ForAddress(Properties.app.Default.TargetURL, new GrpcChannelOptions { HttpClient = httpClient });
             client = new Controller.ControllerClient(channel);
-            ConnectionStatus = Status.Connected;
+
+            //initialize with a time that is greater than the delay variable
+            lastHeartbeat = DateTime.Now.AddSeconds(-connectionDelay + 1);
+            //call willy nilly
+            CheckConnection();
         }
 
         public async Task PowerOffDevice()
         {
-            ConnectionStatus = Status.Disconnected;
-            await Task.Run(() =>
-            { System.Diagnostics.Debug.WriteLine("Powered Off!"); /*power down device*/ });
+            await CheckConnection();
+            if (ConnectionStatus.Equals(Status.Connected))
+            {
+                await client.PowerOffAsync(new PowerOffRequest());
+                System.Diagnostics.Debug.WriteLine("Powered Off!");
+                ConnectionStatus = Status.Disconnected;
+            }
         }
 
         public void IncreaseSpeed()
@@ -92,19 +104,38 @@ namespace ControllerUI.ViewModels
 
         public async void Move(Direction direction)
         {
-            System.Diagnostics.Debug.WriteLine("Moving " + direction.ToString());
+            await CheckConnection();
 
             if (ConnectionStatus.Equals(Status.Connected))
-            {
-                var reply = await client.MoveAsync(
-                    new MoveRequest { Name = "Command Center", 
+            {                
+                await client.MoveAsync(new MoveRequest { Speed = Speed, 
                         //Convert the UI enum to the grpc enum
                         Direction = (GrpcController.Direction)((int)direction) });
+                System.Diagnostics.Debug.WriteLine("Moving " + direction.ToString());
             }
         }
 
         public enum Direction { FORWARD, BACKWARD, LEFT, RIGHT }
         public enum Status { Disconnected, Connected }
+
+        private async Task CheckConnection()
+        {
+            if ((DateTime.Now - lastHeartbeat).TotalSeconds > connectionDelay 
+                || ConnectionStatus.Equals(Status.Disconnected))
+            {
+                try
+                {
+                    await client.HeartbeatAsync(new HeartbeatEcho());
+                    ConnectionStatus = Status.Connected;
+                }
+                catch
+                {
+                    ConnectionStatus = Status.Disconnected;
+                    Console.WriteLine("Heartbeat failed!");
+                }
+                lastHeartbeat = DateTime.Now;
+            }
+        }
 
         //Found online - super useful
         protected bool SetProperty<T>(ref T backingStore, T value,

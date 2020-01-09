@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29521.150
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcControllerClient", "GrpcControllerClient\GrpcControllerClient.csproj", "{B118F2DC-8C3B-4FAA-BCCD-0871EFBB4292}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControllerUI", "BluetoothController\ControllerUI.csproj", "{5753FABE-22BA-45A3-92D8-BC9DE06054A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControllerUI", "ControllerUI\ControllerUI.csproj", "{5753FABE-22BA-45A3-92D8-BC9DE06054A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

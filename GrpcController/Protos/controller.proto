@@ -4,10 +4,11 @@ option csharp_namespace = "GrpcController";
 
 package rover;
 
-// The greeting service definition.
 service Controller {
   // Sends a move command. 
   rpc Move (MoveRequest) returns (MoveReply);
+  rpc Heartbeat (HeartbeatEcho) returns (HeartbeatReply);
+  rpc PowerOff (PowerOffRequest) returns (PowerOffReply);
 }
 
  enum Direction {
@@ -18,13 +19,24 @@ service Controller {
     HALT = 4;
   }
 
-// The request message containing the user's name.
 message MoveRequest {
-  string name = 1;
-  Direction direction = 2; 
+  Direction direction = 1; 
+  int32 Speed = 2;
 }
 
-// The response message containing the greetings.
 message MoveReply {
   string message = 1;
+}
+
+//No information required. A response indicates a connection.
+message HeartbeatEcho {
+}
+
+message HeartbeatReply {
+}
+
+message PowerOffRequest {
+}
+
+message PowerOffReply {
 }

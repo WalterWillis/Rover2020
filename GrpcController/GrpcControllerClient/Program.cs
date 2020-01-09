@@ -30,7 +30,7 @@ namespace GrpcControllerClient
                 try
                 {
                     var reply = await client.MoveAsync(
-                                      new MoveRequest { Name = "Command Center", Direction = Direction.Forward });
+                                      new MoveRequest { Direction = Direction.Forward, Speed = 1 });
                     Console.WriteLine("Message Recieved " + reply.Message);
                 } 
                 //errors are likely due to a mishap in configuration, so ignore for debug
