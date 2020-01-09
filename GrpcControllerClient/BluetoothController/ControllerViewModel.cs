@@ -19,8 +19,7 @@ namespace ControllerUI.ViewModels
         private List<string> devices;
         private Controller.ControllerClient client;
         private GrpcChannel channel;
-
-        public string ConnectionStatus { get; set; }
+        private Status connectionStatus;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -30,6 +29,8 @@ namespace ControllerUI.ViewModels
 
         public List<string> Devices
         { get => devices; set => SetProperty(ref devices, value); }
+        public Status ConnectionStatus
+        { get => connectionStatus; set => SetProperty(ref connectionStatus, value); }
 
         public ControllerViewModel(int speed = 100, int minimum = 0, int maximum = 255,
             int increments = 10)
@@ -53,11 +54,12 @@ namespace ControllerUI.ViewModels
             //Create the channel given our parameters
             channel = GrpcChannel.ForAddress(Properties.app.Default.TargetURL, new GrpcChannelOptions { HttpClient = httpClient });
             client = new Controller.ControllerClient(channel);
-            ConnectionStatus = "Online";
+            ConnectionStatus = Status.Connected;
         }
 
         public async Task PowerOffDevice()
         {
+            ConnectionStatus = Status.Disconnected;
             await Task.Run(() =>
             { System.Diagnostics.Debug.WriteLine("Powered Off!"); /*power down device*/ });
         }
@@ -92,7 +94,7 @@ namespace ControllerUI.ViewModels
         {
             System.Diagnostics.Debug.WriteLine("Moving " + direction.ToString());
 
-            if (ConnectionStatus == "Online")
+            if (ConnectionStatus.Equals(Status.Connected))
             {
                 var reply = await client.MoveAsync(
                     new MoveRequest { Name = "Command Center", 
@@ -102,6 +104,7 @@ namespace ControllerUI.ViewModels
         }
 
         public enum Direction { FORWARD, BACKWARD, LEFT, RIGHT }
+        public enum Status { Disconnected, Connected }
 
         //Found online - super useful
         protected bool SetProperty<T>(ref T backingStore, T value,

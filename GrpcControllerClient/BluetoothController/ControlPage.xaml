@@ -5,6 +5,18 @@
         mc:Ignorable="d"
         x:Class="ControllerUI.ControlPage"
         Title="ControlPage" Height="450" Width="800">
+    <Window.Resources>
+        <Style x:Key="ConnectionStatusEnumTextStyle" TargetType="TextBlock" >
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Text, RelativeSource={RelativeSource Self}}" Value="Disconnected">
+                    <Setter Property="Foreground" Value="Red" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Text, RelativeSource={RelativeSource Self}}" Value="Connected">
+                    <Setter Property="Foreground" Value="Green" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Window.Content>
         <Grid Background="DarkSlateGray" SnapsToDevicePixels="True">
             <Grid.RowDefinitions>
@@ -14,7 +26,7 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
+                <RowDefinition Height=".5*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
@@ -25,21 +37,32 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <ComboBox Grid.Column="3" Grid.ColumnSpan="3"
-                    FontSize="12" x:Name="displayList" Margin="36,10,118,23" Grid.Row="1"/>
+            <Grid Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
 
-            <Button x:Name="powerButton" Grid.Column="0" Grid.ColumnSpan="3" Margin="133,33,133,0" Grid.RowSpan="2">
+                <ComboBox x:Name="displayList" />
+            </Grid>
+
+            <Button x:Name="powerButton">
                 <Button.Content>
                     <TextBlock Text="Power Down Rover"/>
                 </Button.Content>
             </Button>
 
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height=".4*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="{Binding ConnectionStatus}" Style="{StaticResource ConnectionStatusEnumTextStyle}" TextAlignment="Center" Background="DarkGray"/>
+            </Grid>
 
-            <Label x:Name="speedLabel" Content="{Binding Speed}"
-                Grid.Row="0" Grid.Column="4" HorizontalAlignment="Left" HorizontalContentAlignment="Right"/>
-
-
-            <!--AnchorX="1" AnchorY="1" Rotation="-90"-->
             <Button x:Name="upButton" Grid.Row="3" Grid.Column="1">
                 <Button.Content>
                     <TextBlock>
@@ -76,19 +99,53 @@
                     </TextBlock>
                 </Button.Content>
             </Button>
-            <Button x:Name="speedIncreaseButton" Grid.Column="5" Margin="61,7,44,7">
-                <TextBlock>
-                    <TextBlock.Text>+</TextBlock.Text>
-                </TextBlock>
-            </Button>
-            <Slider Orientation="Vertical"                  
+            <Grid Grid.Column="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width=".4*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width=".5*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="speedLabel" Text="{Binding Speed, StringFormat=Motor Speed: \{0\}}" Foreground="White" 
+                Grid.ColumnSpan="4" HorizontalAlignment="Center"  />
+                <Button x:Name="speedIncreaseButton" Grid.Row="1" Grid.Column="2">
+                    <TextBlock>
+                        <TextBlock.Text>+</TextBlock.Text>
+                    </TextBlock>
+                </Button>
+            </Grid>
+            <Grid Grid.Column="5" Grid.Row="1" Grid.RowSpan="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Slider Orientation="Vertical" Grid.Column="1"              
                         x:Name="speedSlider" Value="{Binding Speed, Mode=TwoWay}"
-                        Maximum="255" Minimum="0" Grid.Column="5" Margin="66,33,49,60" Grid.RowSpan="7" />
-            <Button x:Name="speedDecreaseButton"  Grid.Column="5" Margin="61,19,44,30" Grid.Row="6">
-                <TextBlock>
-                    <TextBlock.Text>-</TextBlock.Text>
-                </TextBlock>
-            </Button>
+                        Maximum="255" Minimum="0"/>
+            </Grid>
+            <Grid Grid.Column="5" Grid.Row="6">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width=".4*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width=".5*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="speedDecreaseButton" Grid.Row="0" Grid.Column="2">
+                    <TextBlock>
+                        <TextBlock.Text>-</TextBlock.Text>
+                    </TextBlock>
+                </Button>
+            </Grid>
         </Grid>
     </Window.Content>
 </Window>
