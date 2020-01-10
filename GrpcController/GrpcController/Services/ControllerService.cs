@@ -10,9 +10,12 @@ namespace GrpcController
     public class ControllerService : Controller.ControllerBase
     {
         private readonly ILogger<ControllerService> _logger;
-        public ControllerService(ILogger<ControllerService> logger)
+        private IArduinoCommunicationModel _arduino;
+        public ControllerService(ILogger<ControllerService> logger, IArduinoCommunicationModel model)
         {
             _logger = logger;
+            _arduino = model;
+            InitializeArduino();
         }
 
         /// <summary>
@@ -24,10 +27,23 @@ namespace GrpcController
         public override Task<MoveReply> Move(MoveRequest request, ServerCallContext context)
         {
             var parsedEnum = Enum.GetName(typeof(Direction), request.Direction);
-            Console.WriteLine($"Move request from host: {context.Peer}. Moving {parsedEnum} at speed {request.Speed} as requested.");
+            string message;
+            try
+            {
+                //_arduino.Move(request.Direction);
+                _logger.LogInformation($"Move request from host: {context.Peer}. Moving {parsedEnum} at speed {request.Speed} as requested.");
+                message = $"Performing move to location {parsedEnum} at speed {request.Speed}.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to communicate with Arduino", ex);
+                message = "Cannot fufil Move request.";
+            }
+            Console.WriteLine();
+
             return Task.FromResult(new MoveReply
             {
-                Message = $"Performing move to location {parsedEnum} at speed {request.Speed}."
+                Message = message
             });
         }
 
@@ -54,6 +70,18 @@ namespace GrpcController
             Console.WriteLine($"Received PowerOff request from host: {context.Peer}");
             //Ensure client is notified of receipt
             return Task.FromResult(new PowerOffReply());
+        }
+
+        private void InitializeArduino()
+        {
+            try
+            {
+                _arduino.Initialize();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to initialize Arduino!", ex);
+            }
         }
     }
 }

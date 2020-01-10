@@ -17,6 +17,7 @@ namespace GrpcController
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGrpc();
+            services.AddSingleton<IArduinoCommunicationModel, ArduinoCommunicationModel>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
