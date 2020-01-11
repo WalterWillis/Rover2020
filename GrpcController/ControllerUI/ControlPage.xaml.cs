@@ -17,16 +17,17 @@ namespace ControllerUI
             ViewModel = new ControllerViewModel();
             DataContext = ViewModel;
             displayList.ItemsSource = ViewModel.DisplayVariants;
+            //default the selected item to the first
             displayList.SelectedIndex = 0;
 
             powerButton.Click += PowerOffDialog;
-            upButton.Click += MoveForward;
-            downButton.Click += MoveBackward;
-            leftButton.Click += MoveLeft;
-            rightButton.Click += MoveRight;
+            upButton.Click += (sender, e) => { ViewModel.Move(ControllerViewModel.Direction.FORWARD); };
+            downButton.Click += (sender, e) => { ViewModel.Move(ControllerViewModel.Direction.BACKWARD); };
+            leftButton.Click += (sender, e) => { ViewModel.Move(ControllerViewModel.Direction.LEFT); };
+            rightButton.Click += (sender, e) => { ViewModel.Move(ControllerViewModel.Direction.RIGHT); };
 
-            speedIncreaseButton.Click += IncreaseSpeed;
-            speedDecreaseButton.Click += DecreaseSpeed;
+            speedIncreaseButton.Click += (sender, e) => { ViewModel.IncreaseSpeed(); };
+            speedDecreaseButton.Click += (sender, e) => { ViewModel.DecreaseSpeed(); };
         }
         private async void PowerOffDialog(object sender, RoutedEventArgs e)
         {
@@ -39,42 +40,6 @@ namespace ControllerUI
             {
                 await ViewModel.PowerOffDevice();
             }
-        }
-
-        private void Move(object sender, RoutedEventArgs e)
-        {
-            var keyword = (e.Source as Button).Content.ToString();
-            Enum.TryParse(keyword, out ControllerViewModel.Direction direction);
-            MessageBox.Show(keyword);
-            ViewModel.Move(direction);
-        }
-        private void MoveForward(object sender, RoutedEventArgs e)
-        {
-            ViewModel.Move(ControllerViewModel.Direction.FORWARD);
-        }
-
-        private void MoveBackward(object sender, RoutedEventArgs e)
-        {
-            ViewModel.Move(ControllerViewModel.Direction.BACKWARD);
-        }
-
-        private void MoveLeft(object sender, RoutedEventArgs e)
-        {
-            ViewModel.Move(ControllerViewModel.Direction.LEFT);
-        }
-        private void MoveRight(object sender, RoutedEventArgs e)
-        {
-            ViewModel.Move(ControllerViewModel.Direction.RIGHT);
-        }
-
-        private void IncreaseSpeed(object sender, RoutedEventArgs e)
-        {
-            ViewModel.IncreaseSpeed();
-        }
-
-        private void DecreaseSpeed(object sender, RoutedEventArgs e)
-        {
-            ViewModel.DecreaseSpeed();
         }
     }
 

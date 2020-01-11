@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="TargetURL" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">https://MobileDestroyer:5443</Value>
+      <Value Profile="(Default)">https://127.0.0.1:5001</Value>
     </Setting>
   </Settings>
 </SettingsFile>
