@@ -21,9 +21,9 @@ namespace GrpcController
             }
         }
 
-        public void Move(Direction direction)
+        public void Move(Direction direction, int speed)
         {
-            _arduino.WriteByte(Convert.ToByte(direction));
+            _arduino.Write(new byte[] { Convert.ToByte(direction), Convert.ToByte(speed) });
         }
     }
 }

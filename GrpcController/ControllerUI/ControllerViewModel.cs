@@ -115,7 +115,7 @@ namespace ControllerUI.ViewModels
             }
         }
 
-        public enum Direction { FORWARD, BACKWARD, LEFT, RIGHT }
+        public enum Direction { FORWARD, BACKWARD, LEFT, RIGHT, STOP }
         public enum Status { Disconnected, Connected }
 
         private async Task CheckConnection()

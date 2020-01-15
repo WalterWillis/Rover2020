@@ -30,7 +30,7 @@ namespace GrpcController
             string message;
             try
             {
-                //_arduino.Move(request.Direction);
+                _arduino.Move(request.Direction, request.Speed);
                 _logger.LogInformation($"Move request from host: {context.Peer}. Moving {parsedEnum} at speed {request.Speed} as requested.");
                 message = $"Performing move to location {parsedEnum} at speed {request.Speed}.";
             }

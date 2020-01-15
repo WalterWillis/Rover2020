@@ -24,6 +24,7 @@ namespace ControllerUI
             upButton.Click += (sender, e) => { ViewModel.Move(ControllerViewModel.Direction.FORWARD); };
             downButton.Click += (sender, e) => { ViewModel.Move(ControllerViewModel.Direction.BACKWARD); };
             leftButton.Click += (sender, e) => { ViewModel.Move(ControllerViewModel.Direction.LEFT); };
+            stopButton.Click += (sender, e) => { ViewModel.Move(ControllerViewModel.Direction.STOP); };
             rightButton.Click += (sender, e) => { ViewModel.Move(ControllerViewModel.Direction.RIGHT); };
 
             speedIncreaseButton.Click += (sender, e) => { ViewModel.IncreaseSpeed(); };

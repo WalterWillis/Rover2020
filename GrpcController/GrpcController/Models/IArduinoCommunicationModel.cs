@@ -10,7 +10,7 @@ namespace GrpcController
     /// </summary>
     public interface IArduinoCommunicationModel
     {
-        public void Move(Direction direction);
+        public void Move(Direction direction, int speed);
 
         public void Initialize(int bus = 1, int addr = 0x08);
     }

@@ -81,6 +81,15 @@
                     </TextBlock>
                 </Button.Content>
             </Button>
+            <Button x:Name="stopButton"  Grid.Row="4" Grid.Column="1">
+                <Button.Content>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            STOP
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Button.Content>
+            </Button>
             <Button x:Name="rightButton"  Grid.Row="4" Grid.Column="2">
                 <Button.Content>
                     <TextBlock>
