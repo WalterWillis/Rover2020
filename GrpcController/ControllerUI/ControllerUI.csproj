@@ -35,4 +35,13 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\Certs\client.pfx" Link="client.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Certs\server.pfx" Link="server.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
