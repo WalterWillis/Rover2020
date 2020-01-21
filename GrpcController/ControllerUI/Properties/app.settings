@@ -3,7 +3,19 @@
   <Profiles />
   <Settings>
     <Setting Name="TargetURL" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">https://127.0.0.1:5001</Value>
+      <Value Profile="(Default)">https://127.0.0.1:5443</Value>
+    </Setting>
+    <Setting Name="ClientCert" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">client.pfx</Value>
+    </Setting>
+    <Setting Name="ClientCertPass" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1234</Value>
+    </Setting>
+    <Setting Name="ServerCert" Type="System.String" Scope="User">
+      <Value Profile="(Default)">server.pfx</Value>
+    </Setting>
+    <Setting Name="ServerCertPass" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1234</Value>
     </Setting>
   </Settings>
 </SettingsFile>

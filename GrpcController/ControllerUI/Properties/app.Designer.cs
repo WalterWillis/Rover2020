@@ -25,10 +25,55 @@ namespace ControllerUI.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://127.0.0.1:5001")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://127.0.0.1:5443")]
         public string TargetURL {
             get {
                 return ((string)(this["TargetURL"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("client.pfx")]
+        public string ClientCert {
+            get {
+                return ((string)(this["ClientCert"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1234")]
+        public string ClientCertPass {
+            get {
+                return ((string)(this["ClientCertPass"]));
+            }
+            set {
+                this["ClientCertPass"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("server.pfx")]
+        public string ServerCert {
+            get {
+                return ((string)(this["ServerCert"]));
+            }
+            set {
+                this["ServerCert"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1234")]
+        public string ServerCertPass {
+            get {
+                return ((string)(this["ServerCertPass"]));
+            }
+            set {
+                this["ServerCertPass"] = value;
             }
         }
     }

@@ -49,9 +49,10 @@ namespace ControllerUI.ViewModels
             DisplayVariants = displays;
 
             var handler = new HttpClientHandler();
+            handler.ClientCertificates.Add(Helpers.GetClientCertificate());
             handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
             {
-                return true;
+                return cert.Equals(Helpers.GetServerCertificate());
             };
             var httpClient = new HttpClient(handler);
 
