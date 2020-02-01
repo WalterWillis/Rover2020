@@ -29,8 +29,10 @@ namespace GrpcController
                         {
                             options.ListenAnyIP(5443, listenOptions =>
                             {
+                                string appconfig = Path.Combine(args[0] ?? "", "appsettings.json");
+                                Console.WriteLine("appsettings location:" + appconfig);
                                 var config = new ConfigurationBuilder()
-                                   .AddJsonFile("appsettings.json", optional: false)
+                                   .AddJsonFile(appconfig, optional: false)
                                    .Build();
 
                                 string certPath = config.GetSection("ServerCert").Value;
