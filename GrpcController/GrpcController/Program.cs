@@ -29,14 +29,14 @@ namespace GrpcController
                         {
                             options.ListenAnyIP(5443, listenOptions =>
                             {
-                                string appconfig = Path.Combine(args[0] ?? "", "appsettings.json");
-                                Console.WriteLine("appsettings location:" + appconfig);
+                                string appconfig = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
                                 var config = new ConfigurationBuilder()
                                    .AddJsonFile(appconfig, optional: false)
                                    .Build();
 
                                 string certPath = config.GetSection("ServerCert").Value;
                                 string certPass = config.GetSection("ServerCertPass").Value;
+
                                 listenOptions.UseHttps(certPath, certPass, o =>
                                 {
                                     //o.AllowAnyClientCertificate();
