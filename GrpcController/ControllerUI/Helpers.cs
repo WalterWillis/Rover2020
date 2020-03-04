@@ -8,16 +8,16 @@ namespace ControllerUI
     public static class Helpers
     {
 
-        public static X509Certificate2 GetClientCertificate()
+        public static X509Certificate2 GetClientCertificate(string path, string pass)
         {
-            string configPath = Path.GetFullPath(Properties.app.Default.ClientCert);
-            return new X509Certificate2(configPath, Properties.app.Default.ClientCertPass);
+            string configPath = Path.GetFullPath(Path.GetFullPath(path));
+            return new X509Certificate2(configPath, pass);
         }
 
-        public static X509Certificate2 GetServerCertificate()
+        public static X509Certificate2 GetServerCertificate(string path, string pass)
         {
-            string configPath = Path.GetFullPath(Properties.app.Default.ServerCert);
-            return new X509Certificate2(configPath, Properties.app.Default.ServerCertPass);
+            string configPath = Path.GetFullPath(path);
+            return new X509Certificate2(configPath, pass);
         }
     }
 }

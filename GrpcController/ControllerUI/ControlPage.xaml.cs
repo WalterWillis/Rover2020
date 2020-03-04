@@ -1,4 +1,5 @@
 ﻿using ControllerUI.ViewModels;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,11 +11,11 @@ namespace ControllerUI
     {
         private ControllerViewModel ViewModel { get; set; }
 
-        public ControlPage()
+        public ControlPage(IConfiguration configuration)
         {
             InitializeComponent();
 
-            ViewModel = new ControllerViewModel();
+            ViewModel = new ControllerViewModel(configuration);
             DataContext = ViewModel;
             displayList.ItemsSource = ViewModel.DisplayVariants;
             //default the selected item to the first

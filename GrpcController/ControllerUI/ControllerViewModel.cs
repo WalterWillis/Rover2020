@@ -1,11 +1,14 @@
 ﻿using Grpc.Net.Client;
 using GrpcController;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ControllerUI.ViewModels
 {
@@ -24,6 +27,7 @@ namespace ControllerUI.ViewModels
         private List<string> devices;
         private int speed;
         private Status connectionStatus;
+        private IConfiguration _configuration;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -36,34 +40,42 @@ namespace ControllerUI.ViewModels
         public Status ConnectionStatus
         { get => connectionStatus; set => SetProperty(ref connectionStatus, value); }
 
-        public ControllerViewModel(int speed = 100, int minimum = 0, int maximum = 255,
+        public ControllerViewModel(IConfiguration configuration, int speed = 100, int minimum = 0, int maximum = 255,
             int increments = 10)
         {
             Speed = speed;
             min = minimum;
             max = maximum;
             speedIncrement = increments;
+            _configuration = configuration;
 
             List<string> displays = new List<string>();
             displays.Add("BRCTC SpaceRover UI Phase I");
             DisplayVariants = displays;
-
-            var handler = new HttpClientHandler();
-            handler.ClientCertificates.Add(Helpers.GetClientCertificate());
-            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+            try
             {
-                return cert.Equals(Helpers.GetServerCertificate());
-            };
-            var httpClient = new HttpClient(handler);
+                var handler = new HttpClientHandler();
+                handler.ClientCertificates.Add(Helpers.GetClientCertificate(_configuration.GetSection("ClientCert").Value, _configuration.GetSection("ClientCertPass").Value));
+                handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+                {
+                    return cert.Equals(Helpers.GetServerCertificate(_configuration.GetSection("ServerCert").Value, _configuration.GetSection("ServerCertPass").Value));
+                };
+                var httpClient = new HttpClient(handler);
 
-            //Create the channel given our parameters
-            channel = GrpcChannel.ForAddress(Properties.app.Default.TargetURL, new GrpcChannelOptions { HttpClient = httpClient });
-            client = new Controller.ControllerClient(channel);
-
+                //Create the channel given our parameters
+                channel = GrpcChannel.ForAddress(_configuration.GetSection("TargetURL").Value, new GrpcChannelOptions { HttpClient = httpClient });
+                client = new Controller.ControllerClient(channel);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"Error configuring connection to server. Cannot find certificate. " +
+                    $"{Environment.NewLine} Program requires a server.pfx and client.pfx file. ");
+            }
             //initialize with a time that is greater than the delay variable
             lastHeartbeat = DateTime.Now.AddSeconds(-connectionDelay + 1);
-            //call willy nilly
+            //call willy nilly, message box will not show until timeout ocurrs.
             CheckConnection();
+
         }
 
         public async Task PowerOffDevice()
@@ -126,13 +138,14 @@ namespace ControllerUI.ViewModels
             {
                 try
                 {
-                    await client.HeartbeatAsync(new HeartbeatEcho());
+                    //Anything longer than 5 seconds is unreliable
+                    await client.HeartbeatAsync(new HeartbeatEcho(), deadline: DateTime.Now.AddSeconds(5));
                     ConnectionStatus = Status.Connected;
                 }
-                catch
+                catch(Exception ex)
                 {
                     ConnectionStatus = Status.Disconnected;
-                    Console.WriteLine("Heartbeat failed!");
+                    MessageBox.Show($"Connection error to host {_configuration.GetSection("TargetURL").Value}! Is the server online?");
                 }
                 lastHeartbeat = DateTime.Now;
             }

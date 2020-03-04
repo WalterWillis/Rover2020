@@ -4,8 +4,10 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+    <StartupObject>ControllerUI.App</StartupObject>
+    <Version>1.1.0</Version>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.11.2" />
     <PackageReference Include="Grpc.Net.Client" Version="2.26.0" />
@@ -13,6 +15,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,27 +26,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Properties\app.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>app.settings</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Properties\app.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>app.Designer.cs</LastGenOutput>
+    <ContentWithTargetPath Include="..\Certs\client.pfx" Link="client.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <TargetPath>client.pfx</TargetPath>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </ContentWithTargetPath>
+   
+    <ContentWithTargetPath Include="..\Certs\server.pfx" Link="server.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <TargetPath>server.pfx</TargetPath>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </ContentWithTargetPath>
+    
+    <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="..\Certs\client.pfx" Link="client.pfx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\Certs\server.pfx" Link="server.pfx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
   </ItemGroup>
 

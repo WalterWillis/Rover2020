@@ -1,8 +1,7 @@
 ﻿<Application x:Class="ControllerUI.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ControllerUI"
-             StartupUri="ControlPage.xaml">
+             xmlns:local="clr-namespace:ControllerUI">
     <Application.Resources>
          
     </Application.Resources>
