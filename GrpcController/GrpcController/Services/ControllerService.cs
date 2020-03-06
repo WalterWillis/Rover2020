@@ -43,7 +43,7 @@ namespace GrpcController
 
             return Task.FromResult(new MoveReply
             {
-                Message = message
+                Message = message //Not currently used by the client
             });
         }
 
