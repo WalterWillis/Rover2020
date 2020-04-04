@@ -139,7 +139,7 @@ namespace ControllerUI.ViewModels
                 try
                 {
                     //Anything longer than 5 seconds is unreliable
-                    await client.HeartbeatAsync(new HeartbeatEcho(), deadline: DateTime.Now.AddSeconds(5));
+                    await client.HeartbeatAsync(new HeartbeatEcho(), deadline: DateTime.UtcNow.AddSeconds(5));
                     ConnectionStatus = Status.Connected;
                 }
                 catch(Exception ex)
