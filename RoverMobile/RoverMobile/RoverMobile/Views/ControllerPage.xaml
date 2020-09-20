@@ -1,7 +1,24 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="RoverMobile.Views.ControllerPage">
+             x:Class="RoverMobile.Views.ControllerPage"
+             Title="Rover Controller">
+
+    <!--<ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="ConnectionStatusEnumTextStyle" TargetType="Label" >
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Text}" Value="Disconnected" TargetType="Label">
+                        <Setter Property="BackgroundColor" Value="Red" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Text}" Value="Connected" TargetType="Label">
+                        <Setter Property="BackgroundColor" Value="Green" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>-->
+    
     <ContentPage.Content>
         <Grid BackgroundColor="DarkSlateGray" ColumnSpacing="10" RowSpacing="20" Padding="20">
             <Grid.RowDefinitions>
@@ -20,36 +37,44 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <Picker BackgroundColor="Blue" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="3"
-                    Title="BRCTC SpaceRover UI" FontSize="Micro" x:Name="displayPicker"/>
+            <!--<Picker BackgroundColor="Blue" Grid.Row="6" Grid.Column="4" Grid.ColumnSpan="3"
+                    Title="BRCTC SpaceRover UI" FontSize="Micro" x:Name="displayPicker"/>-->
 
-            <Frame x:Name="powerButtonFrame" Grid.Row="1" Grid.Column="0">
-                <Label Text="Power Down Rover"/>
-            </Frame>
+            <Label x:Name="lblConnectionStatus" Text="{Binding ConnectionStatus}" 
+                   Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                   VerticalOptions="StartAndExpand" 
+                   HorizontalTextAlignment="Center" BackgroundColor="#FFE8FF00" FontSize="12"/>
 
-            <StackLayout Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="4"  Orientation="Horizontal">
-                <Button Text="-" x:Name="speedDecreaseButton" />
-                <Slider HorizontalOptions="FillAndExpand"                    
+            <Frame x:Name="powerButtonFrame"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
+                    <Label Text="Power Down Rover" HorizontalTextAlignment="Center"/>
+                </Frame>
+
+
+            <Slider HorizontalOptions="FillAndExpand" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="5"                 
                         x:Name="speedSlider" Value="{Binding Speed, Mode=TwoWay}"
                         ThumbColor="AntiqueWhite" 
                         MinimumTrackColor="Green" 
                         MaximumTrackColor="Red"
                         Maximum="255" Minimum="0"                     
-                        VerticalOptions="FillAndExpand"/>
-                <Button Text="+" x:Name="speedIncreaseButton" />
-            </StackLayout>
-
-            <Label x:Name="speedLabel" Text="{Binding Speed}"
-                Grid.Row="0" Grid.Column="4" HorizontalOptions="End" HorizontalTextAlignment="Start"/>
+                        VerticalOptions="FillAndExpand" Rotation="-90"/>
 
 
-            <!--AnchorX="1" AnchorY="1" Rotation="-90"-->
-            <Button Grid.Row="3" Grid.Column="1" Text="UP" x:Name="upButton"/>
-            <Button Grid.Row="4" Grid.Column="0" Text="LEFT" x:Name="leftButton"/>
-            <Button Grid.Row="4" Grid.Column="2" Text="RIGHT" x:Name="rightButton"/>
-            <Button Grid.Row="5" Grid.Column="1" Text="DOWN" x:Name="downButton"/>
+            <Label x:Name="speedLabel" Text="{Binding Speed}" TextColor="AntiqueWhite"
+                Grid.Row="0" Grid.Column="6" Grid.ColumnSpan="2"  HorizontalOptions="End" HorizontalTextAlignment="Start"/>
+
+
+            <Button Text="-" x:Name="speedDecreaseButton" Grid.Row="2" Grid.Column="5" FontSize="Default"/>
+            <Button Text="+" x:Name="speedIncreaseButton" Grid.Row="2" Grid.Column="7" FontSize="Default" />
+            
+            <Button Grid.Row="4" Grid.Column="3" Grid.ColumnSpan="3" Text="UP" x:Name="upButton"/>
+            <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Text="LEFT" x:Name="leftButton"/>
+            <Button Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="3" Text="STOP" x:Name="stopButton"/>
+            <Button Grid.Row="5" Grid.Column="6" Grid.ColumnSpan="3" Text="RIGHT" x:Name="rightButton"/>
+            <Button Grid.Row="6" Grid.Column="3" Grid.ColumnSpan="3" Text="DOWN" x:Name="downButton"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

@@ -6,6 +6,8 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using Xamarin.Forms;
+using RoverMobile.Views;
 
 namespace RoverMobile.Droid
 {
@@ -21,6 +23,19 @@ namespace RoverMobile.Droid
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+
+            //allowing the device to change the screen orientation based on the rotation 
+            //MessagingCenter.Subscribe<ControllerPage>(this, "AllowLandscape", sender =>
+            //{
+            //    RequestedOrientation = ScreenOrientation.Landscape;
+            //});
+
+            //during page close setting back to portrait
+            //MessagingCenter.Subscribe<ControllerPage>(this, "PreventLandscape", sender =>
+            //{
+            //    RequestedOrientation = ScreenOrientation.Portrait;
+            //});
+
             LoadApplication(new App());
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)

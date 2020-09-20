@@ -12,10 +12,13 @@ namespace RoverMobile.ViewModels
         private int max;
         private int speedIncrement = 10;
         private List<string> displayVariants;
+        private Status connectionStatus;
         public int Speed { get => speed; set => SetProperty(ref speed, value); }
         public List<string> DisplayVariants
         { get => displayVariants; set => SetProperty(ref displayVariants, value); }
 
+        public Status ConnectionStatus
+        { get => connectionStatus; set => SetProperty(ref connectionStatus, value); }
         public ControllerViewModel(int speed = 100, int minimum = 0, int maximum = 255,
             int increments = 10)
         {
@@ -27,12 +30,21 @@ namespace RoverMobile.ViewModels
             List<string> displays = new List<string>();
             displays.Add("Phase I");
             DisplayVariants = displays;
+
+            ConnectionStatus = Status.Connected;
         }
 
         public async Task PowerOffDevice()
         {
             await Task.Run(() =>
-            { System.Diagnostics.Debug.WriteLine("Powered Off!"); /*power down device*/ });
+            { 
+                if (ConnectionStatus.Equals(Status.Connected))
+                {
+                    //await client.PowerOffAsync(new PowerOffRequest());
+                    System.Diagnostics.Debug.WriteLine("Powered Off!");
+                    ConnectionStatus = Status.Disconnected;
+                }
+            });
         }
 
         public void IncreaseSpeed()
@@ -61,11 +73,44 @@ namespace RoverMobile.ViewModels
             }
         }
 
-        public void Move(Direction direction)
+        public async void Move(Direction direction)
         {
-            System.Diagnostics.Debug.WriteLine("Moving " + direction.ToString());
+            await CheckConnection();
+
+            if (ConnectionStatus.Equals(Status.Connected))
+            {
+                //await client.MoveAsync(new MoveRequest
+                //{
+                //    Speed = Speed,
+                //    //Convert the UI enum to the grpc enum
+                //    Direction = (GrpcController.Direction)((int)direction)
+                //});
+                System.Diagnostics.Debug.WriteLine("Moving " + direction.ToString());
+            }
         }
 
-        public enum Direction { FORWARD, BACKWARD, LEFT, RIGHT }
+        private async Task CheckConnection()
+        {
+            //if ((DateTime.Now - lastHeartbeat).TotalSeconds > connectionDelay
+            //    || ConnectionStatus.Equals(Status.Disconnected))
+            //{
+            //    try
+            //    {
+            //        //Anything longer than 5 seconds is unreliable
+            //        await client.HeartbeatAsync(new HeartbeatEcho(), deadline: DateTime.UtcNow.AddSeconds(5));
+            //        ConnectionStatus = Status.Connected;
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        ConnectionStatus = Status.Disconnected;
+            //        MessageBox.Show($"Connection error to host {_configuration.GetSection("TargetURL").Value}! Is the server online?");
+            //    }
+            //    lastHeartbeat = DateTime.Now;
+            //}
+        }
+
+        public enum Direction { FORWARD, BACKWARD, LEFT, RIGHT, STOP }
+
+        public enum Status { Disconnected, Connected }
     }
 }
