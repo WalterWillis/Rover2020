@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -36,20 +37,21 @@ namespace GrpcController
 
                                 string certPath = config.GetSection("ServerCert").Value;
                                 string certPass = config.GetSection("ServerCertPass").Value;
-
+                                listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+                                
                                 listenOptions.UseHttps(certPath, certPass, o =>
                                 {
-                                    //o.AllowAnyClientCertificate();
+                                    o.AllowAnyClientCertificate();
 
-                                    o.ClientCertificateValidation = (cert, chain, errors) =>
-                                    {
-                                        string certPath = config.GetSection("ClientCert").Value;
-                                        string certPass = config.GetSection("ClientCertPass").Value;
+                                    //o.ClientCertificateValidation = (cert, chain, errors) =>
+                                    //{
+                                    //    string certPath = config.GetSection("ClientCert").Value;
+                                    //    string certPass = config.GetSection("ClientCertPass").Value;
 
-                                        var clientCert = new System.Security.Cryptography.X509Certificates.X509Certificate2(certPath, certPass);
+                                    //    var clientCert = new System.Security.Cryptography.X509Certificates.X509Certificate2(certPath, certPass);
 
-                                        return cert.Equals(clientCert);
-                                    };
+                                    //    return cert.Equals(clientCert);
+                                    //};
                                 });
                             });
                         });

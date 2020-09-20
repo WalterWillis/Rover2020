@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcController";
+
+package rover;
+
+service Controller {
+  // Sends a move command. 
+  rpc Move (MoveRequest) returns (MoveReply);
+  rpc Heartbeat (HeartbeatEcho) returns (HeartbeatReply);
+  rpc PowerOff (PowerOffRequest) returns (PowerOffReply);
+}
+
+ enum Direction {
+    FORWARD = 0;
+    BACKWARD = 1;
+    LEFT = 2;
+    RIGHT = 3;
+    HALT = 4;
+  }
+
+message MoveRequest {
+  Direction direction = 1; 
+  int32 Speed = 2;
+}
+
+message MoveReply {
+  string message = 1;
+}
+
+//No information required. A response indicates a connection.
+message HeartbeatEcho {
+}
+
+message HeartbeatReply {
+}
+
+message PowerOffRequest {
+}
+
+message PowerOffReply {
+}

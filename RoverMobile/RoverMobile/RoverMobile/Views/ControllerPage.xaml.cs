@@ -121,19 +121,21 @@ namespace RoverMobile.Views
         }
 
         #region Android View Changes
-/* Source: https://heartbeat.fritz.ai/force-an-orientation-on-a-single-page-in-xamarin-forms-b9c0c5295367 */
+        /* Source: https://heartbeat.fritz.ai/force-an-orientation-on-a-single-page-in-xamarin-forms-b9c0c5295367 */
 
-//protected override void OnAppearing()
-//{
-//    base.OnAppearing();
-//    MessagingCenter.Send(this, "AllowLandscape");
-//}
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            //viewModel.Enable();
+            //MessagingCenter.Send(this, "AllowLandscape");
+        }
 
-//protected override void OnDisappearing()
-//{
-//    base.OnDisappearing();
-//    MessagingCenter.Send(this, "PreventLandscape"); //during page close setting back to portrait 
-//}
-#endregion
-}
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            //viewModel.Disable();
+            //MessagingCenter.Send(this, "PreventLandscape"); //during page close setting back to portrait 
+        }
+        #endregion
+    }
 }

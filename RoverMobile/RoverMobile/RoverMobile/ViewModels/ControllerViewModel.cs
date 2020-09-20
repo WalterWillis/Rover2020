@@ -1,5 +1,7 @@
-﻿using System;
+﻿using RoverMobileGrpcClient;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,12 +15,19 @@ namespace RoverMobile.ViewModels
         private int speedIncrement = 10;
         private List<string> displayVariants;
         private Status connectionStatus;
+        private Client client;
+        private DateTime lastHeartbeat;
+        private int connectionDelay = 60; // how long between heartbeat calls
+
+        private Task startTask;
+
         public int Speed { get => speed; set => SetProperty(ref speed, value); }
         public List<string> DisplayVariants
         { get => displayVariants; set => SetProperty(ref displayVariants, value); }
 
         public Status ConnectionStatus
         { get => connectionStatus; set => SetProperty(ref connectionStatus, value); }
+
         public ControllerViewModel(int speed = 100, int minimum = 0, int maximum = 255,
             int increments = 10)
         {
@@ -31,20 +40,65 @@ namespace RoverMobile.ViewModels
             displays.Add("Phase I");
             DisplayVariants = displays;
 
-            ConnectionStatus = Status.Connected;
+            client = new Client();
+
+            //initialize with a time that is greater than the delay variable
+            lastHeartbeat = DateTime.Now.AddSeconds(-connectionDelay + 1);
+
+            startTask = Task.Run(async () =>
+            {
+                await client.CreateNewConnection(@"10.0.2.2", 5443);
+                if (await client.HeartBeat())
+                {
+                    ConnectionStatus = Status.Connected;
+                }
+                else
+                {
+                    ConnectionStatus = Status.Disconnected;
+                }
+            });
+        }
+
+        public void Enable()
+        {
+            try
+            {
+                
+            }
+            catch (Exception ex)
+            {
+                //do something here
+            }
+        }
+
+        public void Disable()
+        {
+            try
+            {
+                
+            }
+            catch (Exception ex)
+            {
+                //do something here
+            }
         }
 
         public async Task PowerOffDevice()
         {
-            await Task.Run(() =>
-            { 
-                if (ConnectionStatus.Equals(Status.Connected))
+            await CheckConnection();
+
+            if (ConnectionStatus.Equals(Status.Connected))
+            {
+                if (await client.PowerOff())
                 {
-                    //await client.PowerOffAsync(new PowerOffRequest());
                     System.Diagnostics.Debug.WriteLine("Powered Off!");
                     ConnectionStatus = Status.Disconnected;
                 }
-            });
+                else
+                {
+                    Debug.WriteLine("Failed to power off!");
+                }
+            }
         }
 
         public void IncreaseSpeed()
@@ -79,34 +133,25 @@ namespace RoverMobile.ViewModels
 
             if (ConnectionStatus.Equals(Status.Connected))
             {
-                //await client.MoveAsync(new MoveRequest
-                //{
-                //    Speed = Speed,
-                //    //Convert the UI enum to the grpc enum
-                //    Direction = (GrpcController.Direction)((int)direction)
-                //});
-                System.Diagnostics.Debug.WriteLine("Moving " + direction.ToString());
+                await client.Move((int)direction, Speed);
+
+                Debug.WriteLine("Moving " + direction.ToString());
             }
         }
 
         private async Task CheckConnection()
         {
-            //if ((DateTime.Now - lastHeartbeat).TotalSeconds > connectionDelay
-            //    || ConnectionStatus.Equals(Status.Disconnected))
-            //{
-            //    try
-            //    {
-            //        //Anything longer than 5 seconds is unreliable
-            //        await client.HeartbeatAsync(new HeartbeatEcho(), deadline: DateTime.UtcNow.AddSeconds(5));
-            //        ConnectionStatus = Status.Connected;
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        ConnectionStatus = Status.Disconnected;
-            //        MessageBox.Show($"Connection error to host {_configuration.GetSection("TargetURL").Value}! Is the server online?");
-            //    }
-            //    lastHeartbeat = DateTime.Now;
-            //}
+            if ((DateTime.Now - lastHeartbeat).TotalSeconds > connectionDelay
+                || ConnectionStatus.Equals(Status.Disconnected))
+            {
+                //Anything longer than 5 seconds is unreliable
+                if (await client.HeartBeat())
+                    ConnectionStatus = Status.Connected;
+                else
+                    ConnectionStatus = Status.Disconnected;
+
+                lastHeartbeat = DateTime.Now;
+            }
         }
 
         public enum Direction { FORWARD, BACKWARD, LEFT, RIGHT, STOP }
