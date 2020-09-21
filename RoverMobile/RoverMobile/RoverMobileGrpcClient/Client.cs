@@ -22,23 +22,28 @@ namespace RoverMobileGrpcClient
         /// <param name="port"></param>
         /// <param name="metadata"></param>
         /// <param name="metaDataValue"></param>
-        public async Task CreateNewConnection(string host, int port, string metadata = null, string metaDataValue = null)
+        public async Task CreateNewConnection(string host)
         {
             try
             {
                 await CloseExistingConnection();
 
-                Uri uri = new Uri($"https://{host}:{port}");
+                Uri uri = new Uri($"https://{host}");
 
                 channel = GrpcChannel.ForAddress(uri.AbsoluteUri, new GrpcChannelOptions
                 {
-                    HttpHandler = new GrpcWebHandler(new HttpClientHandler()
-                    {
-                        ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
-                        {
-                            return true;
-                        }
-                    })
+                    //Let's use a client in case there's more we want to add later
+                    HttpClient = new HttpClient(
+                        new GrpcWebHandler(
+                            new HttpClientHandler()
+                            {
+                                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+                                {
+                                    return true;
+                                }
+                            }
+                        )
+                    )
                 });
 
                 client = new Controller.ControllerClient(channel);

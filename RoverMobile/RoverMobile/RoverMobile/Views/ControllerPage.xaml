@@ -51,7 +51,14 @@
 
             <Frame x:Name="powerButtonFrame"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
                     <Label Text="Power Down Rover" HorizontalTextAlignment="Center"/>
-                </Frame>
+            </Frame>
+            <Expander Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+                <Expander.Header>
+                    <!--Placehold the emulator localhost value-->
+                    <Entry x:Name="hostEntry" Text="{Binding IPHost, Mode=TwoWay}" 
+                           BackgroundColor="AliceBlue" Keyboard="Text" Completed="hostEntry_Completed" />
+                </Expander.Header>
+            </Expander>
 
 
             <Slider HorizontalOptions="FillAndExpand" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="5"                 

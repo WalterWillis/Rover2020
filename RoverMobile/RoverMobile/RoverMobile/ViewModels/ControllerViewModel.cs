@@ -15,6 +15,9 @@ namespace RoverMobile.ViewModels
         private int speedIncrement = 10;
         private List<string> displayVariants;
         private Status connectionStatus;
+        private string ipHost = "10.0.2.2:5443";
+
+
         private Client client;
         private DateTime lastHeartbeat;
         private int connectionDelay = 60; // how long between heartbeat calls
@@ -27,6 +30,9 @@ namespace RoverMobile.ViewModels
 
         public Status ConnectionStatus
         { get => connectionStatus; set => SetProperty(ref connectionStatus, value); }
+
+        public string IPHost
+        { get => ipHost; set => SetProperty(ref ipHost, value); }
 
         public ControllerViewModel(int speed = 100, int minimum = 0, int maximum = 255,
             int increments = 10)
@@ -47,7 +53,7 @@ namespace RoverMobile.ViewModels
 
             startTask = Task.Run(async () =>
             {
-                await client.CreateNewConnection(@"10.0.2.2", 5443);
+                await client.CreateNewConnection(IPHost);
                 if (await client.HeartBeat())
                 {
                     ConnectionStatus = Status.Connected;
@@ -57,30 +63,6 @@ namespace RoverMobile.ViewModels
                     ConnectionStatus = Status.Disconnected;
                 }
             });
-        }
-
-        public void Enable()
-        {
-            try
-            {
-                
-            }
-            catch (Exception ex)
-            {
-                //do something here
-            }
-        }
-
-        public void Disable()
-        {
-            try
-            {
-                
-            }
-            catch (Exception ex)
-            {
-                //do something here
-            }
         }
 
         public async Task PowerOffDevice()
@@ -152,6 +134,12 @@ namespace RoverMobile.ViewModels
 
                 lastHeartbeat = DateTime.Now;
             }
+        }
+
+        public async Task ChangeHost()
+        {
+            await client.CreateNewConnection(IPHost);
+            await CheckConnection();
         }
 
         public enum Direction { FORWARD, BACKWARD, LEFT, RIGHT, STOP }

@@ -73,7 +73,7 @@ namespace RoverMobile.Views
                 downButton.Command = Backward = new Command(_ => viewModel.Move(ControllerViewModel.Direction.BACKWARD));
                 leftButton.Command = Left = new Command(_ => viewModel.Move(ControllerViewModel.Direction.LEFT));
                 rightButton.Command = Right = new Command(_ => viewModel.Move(ControllerViewModel.Direction.RIGHT));
-                rightButton.Command = Stop = new Command(_ => viewModel.Move(ControllerViewModel.Direction.STOP));
+                stopButton.Command = Stop = new Command(_ => viewModel.Move(ControllerViewModel.Direction.STOP));
 
                 speedIncreaseButton.Command = IncreaseSpeed = new Command(_ => viewModel.IncreaseSpeed());
                 speedDecreaseButton.Command = DecreaseSpeed = new Command(_ => viewModel.DecreaseSpeed());
@@ -126,6 +126,7 @@ namespace RoverMobile.Views
         protected override void OnAppearing()
         {
             base.OnAppearing();
+            hostEntry.Completed += hostEntry_Completed;
             //viewModel.Enable();
             //MessagingCenter.Send(this, "AllowLandscape");
         }
@@ -133,9 +134,15 @@ namespace RoverMobile.Views
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+            hostEntry.Completed -= hostEntry_Completed;
             //viewModel.Disable();
             //MessagingCenter.Send(this, "PreventLandscape"); //during page close setting back to portrait 
         }
         #endregion
+
+        private async void hostEntry_Completed(object sender, EventArgs e)
+        {
+            await viewModel.ChangeHost();
+        }
     }
 }

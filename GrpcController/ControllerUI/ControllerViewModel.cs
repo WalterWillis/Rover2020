@@ -56,9 +56,20 @@ namespace ControllerUI.ViewModels
             {
                 var handler = new HttpClientHandler();
                 handler.ClientCertificates.Add(Helpers.GetClientCertificate(_configuration.GetSection("ClientCert").Value, _configuration.GetSection("ClientCertPass").Value));
+                
+                bool.TryParse(_configuration.GetSection("ValidateCerts").Value, out bool verifyCerts);
+
                 handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
                 {
-                    return cert.Equals(Helpers.GetServerCertificate(_configuration.GetSection("ServerCert").Value, _configuration.GetSection("ServerCertPass").Value));
+                    bool isValid = false;
+
+                    if (verifyCerts)
+                        isValid = cert.Equals(Helpers.GetServerCertificate(_configuration.GetSection("ServerCert").Value, 
+                            _configuration.GetSection("ServerCertPass").Value));
+                    else
+                        isValid = true;
+
+                    return isValid;
                 };
                 var httpClient = new HttpClient(handler);
 
