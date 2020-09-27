@@ -7,17 +7,25 @@ using Xamarin.Forms;
 
 using RoverMobile.Models;
 using RoverMobile.Views;
+using System.Threading;
+using System.Data.Common;
 
 namespace RoverMobile.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
         private Item _selectedItem;
+        private string _currentScanAddress;
+        private CancellationTokenSource tokenSource;
 
         public ObservableCollection<Item> Items { get; }
         public Command LoadItemsCommand { get; }
         public Command AddItemCommand { get; }
         public Command<Item> ItemTapped { get; }
+        public Command CancelScanCommand { get; }
+
+        public string CurrentScanAddress 
+        { get => _currentScanAddress; set => SetProperty(ref _currentScanAddress, value); }
 
         public ItemsViewModel()
         {
@@ -28,6 +36,16 @@ namespace RoverMobile.ViewModels
             ItemTapped = new Command<Item>(OnItemSelected);
 
             AddItemCommand = new Command(OnAddItem);
+
+            CancelScanCommand = new Command(() => CancelScan());
+
+            tokenSource = new CancellationTokenSource();
+        }
+
+        private void CancelScan()
+        {
+            if (IsBusy)
+                tokenSource.Cancel(); 
         }
 
         async Task ExecuteLoadItemsCommand()
@@ -36,11 +54,17 @@ namespace RoverMobile.ViewModels
 
             try
             {
-                Items.Clear();
-                var items = await DataStore.GetItemsAsync(true);
-                foreach (var item in items)
+                //var items = await DataStore.GetItemsAsync(true);
+
+                await foreach (string status in DataStore.GetIPAddresses(tokenSource.Token))
                 {
-                    Items.Add(item);
+                    if(status.Contains("found")) //if we get the special status, pull the embedded ID and pull the item
+                    {
+                        var idSplitter = status.Split(":");
+                        Items.Add(await DataStore.GetItemAsync(idSplitter[1]));
+                    }
+                    else
+                        CurrentScanAddress = status;
                 }
             }
             catch (Exception ex)
@@ -50,6 +74,7 @@ namespace RoverMobile.ViewModels
             finally
             {
                 IsBusy = false;
+                tokenSource = new CancellationTokenSource(); //create a new source with a new token
             }
         }
 

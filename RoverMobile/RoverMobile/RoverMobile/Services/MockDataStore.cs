@@ -4,6 +4,8 @@ using System.Dynamic;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using RoverMobile.Models;
 using RoverMobileGrpcClient;
@@ -14,7 +16,6 @@ namespace RoverMobile.Services
     public class MockDataStore : IDataStore<Item>
     {
         private List<Item> items;
-        private Task<bool> dataFillTask; //used to keep track of the async task. Can be used for refresh logic.
         private Item selectedItem;
 
         public MockDataStore()
@@ -22,7 +23,6 @@ namespace RoverMobile.Services
             if (items == null)
             {
                 items = new List<Item>();
-                dataFillTask = GetIPAddresses();
             }
         }
 
@@ -67,18 +67,10 @@ namespace RoverMobile.Services
 
         public async Task<IEnumerable<Item>> GetItemsAsync(bool forceRefresh = false)
         {
-            if (forceRefresh)
-                Refresh();
             return await Task.FromResult(items);
         }
 
-        public void Refresh()
-        {
-            if(dataFillTask.IsCompleted)
-                dataFillTask = GetIPAddresses();
-        }
-
-        private async Task<bool> GetIPAddresses()
+        public async IAsyncEnumerable<string> GetIPAddresses([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var _interface = NetworkInterface
                            .GetAllNetworkInterfaces()
@@ -124,7 +116,7 @@ namespace RoverMobile.Services
             IPAddress networkAddr = new IPAddress(networkAddrBytes);
             IPAddress networkBroadcastAddr = new IPAddress(broadcast);
 
-            List<string> currentItems = new List<string>();
+            List<string> currentItems = new List<string>(); //
 
             foreach (Item item in items)
                 currentItems.Add(item.Text); //add the current list of IPs to our checklist so we don't waste time or get redundant IPs.
@@ -133,48 +125,57 @@ namespace RoverMobile.Services
             currentAttempt = GetNextIpAddress(currentAttempt); // skip default gateway, assuming typical network
 
 #if DEBUG
-            hostPossibilities = 1;
-#endif
-
-            for (int i = 0; i < hostPossibilities; i++)
-            {
-                string host = currentAttempt.ToString() + ":5443";
-
-                if (!currentItems.Contains(host))
-                {                   
-                    bool success = await Client.TryConnection(host);
-
-                    if (success)
-                    {
-                        items.Add(new Item()
-                        {
-                            Description = currentAttempt.ToString(),
-                            Id = Guid.NewGuid().ToString(),
-                            Text = host
-                        });
-                    }
-                }
-                currentAttempt = GetNextIpAddress(currentAttempt);
-            }
-
-#if DEBUG
             //try the emulator address
             string debugHost = "10.0.2.2:5443";
             if (await Client.TryConnection(debugHost))
             {
                 if (!currentItems.Contains(debugHost))
                 {
-                    items.Add(new Item()
+                    yield return $"Currently Scanning {debugHost}";
+                    Item newItem = new Item()
                     {
                         Description = "DEBUG address",
                         Id = Guid.NewGuid().ToString(),
                         Text = debugHost
-                    });
+                    };
+                   
+                    items.Add(newItem);
+                    yield return $"found:{newItem.Id}";
                 }
             }
+
+            hostPossibilities = 15;
 #endif
 
-            return true;
+            for (int i = 0; i < hostPossibilities; i++)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+
+                string host = currentAttempt.ToString() + ":5443";
+
+                if (!currentItems.Contains(host))
+                {
+                   yield return $"Currently Scanning {host}";
+                    bool success = await Client.TryConnection(host);
+
+                    if (success)
+                    {
+                        Item newItem = new Item()
+                        {
+                            Description = currentAttempt.ToString(),
+                            Id = Guid.NewGuid().ToString(),
+                            Text = host
+                        };     
+                        
+                        items.Add(newItem);
+                        yield return $"found:{newItem.Id}";
+                    }
+                }
+                currentAttempt = GetNextIpAddress(currentAttempt);
+            }
+
+            yield return $"Finished Scanning";
         }
 
         private IPAddress GetNextIpAddress(IPAddress ipAddress)

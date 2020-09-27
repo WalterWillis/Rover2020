@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoverMobile.iOS", "RoverMob
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoverMobile", "RoverMobile\RoverMobile\RoverMobile.csproj", "{7A90B4B0-D292-4C27-9F1B-42E9267CCFEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoverMobileGrpcClient", "RoverMobile\RoverMobileGrpcClient\RoverMobileGrpcClient.csproj", "{C483DF08-9B8E-4FA9-A3D1-7CAE8FFD3048}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoverMobileGrpcClient", "RoverMobile\RoverMobileGrpcClient\RoverMobileGrpcClient.csproj", "{C483DF08-9B8E-4FA9-A3D1-7CAE8FFD3048}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -66,6 +66,8 @@ namespace RoverMobileGrpcClient
             {
                 Uri uri = new Uri($"https://{host}");
 
+                int baseTimeout = 2000; // give some time in ms. Shouldn't need long.
+
                 GrpcChannel tempChannel = GrpcChannel.ForAddress(uri.AbsoluteUri, new GrpcChannelOptions
                 {
                     //Let's use a client in case there's more we want to add later
@@ -83,23 +85,31 @@ namespace RoverMobileGrpcClient
                 });
 
                 Controller.ControllerClient client = new Controller.ControllerClient(tempChannel);
-                CancellationTokenSource source = new CancellationTokenSource();
-                int timeLimit = 50; // give some time in ms. Shouldn't need long.
-                source.CancelAfter(timeLimit);
-                CancellationToken token = source.Token;
 
-                HeartbeatReply reply = await Task.Run( () => 
-                { 
-                    return client.Heartbeat(new HeartbeatEcho()); 
-                }, token);
+                Task<HeartbeatReply> connectTask = Task.Run(() => 
+                {
+                    return client.Heartbeat(
+                        new HeartbeatEcho(), deadline: DateTime.UtcNow.AddSeconds(2));
+                });
 
-                if (reply != null)
+
+                var completedTask = await Task.WhenAny(connectTask, Task.Delay(baseTimeout));
+
+
+                if (completedTask == connectTask && connectTask.Result != null)
                     canConnect = true;
+            }
+            catch (Grpc.Core.RpcException ex)
+            {
+                Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Status);
             }
             catch (Exception ex)
             {
                 // ignore
             }
+            if (canConnect)
+                Debug.WriteLine($"Connected to {host}");
 
             return canConnect;
         }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RoverMobile.Services
@@ -19,6 +21,13 @@ namespace RoverMobile.Services
         Task<T> GetSelectedItem();
 
         Task SelectItem(string id);
-        void Refresh();
+
+        /// <summary>
+        /// Scans the network for viable servers
+        /// </summary>
+        /// <returns></returns>
+#pragma warning disable CS8424 // The EnumeratorCancellationAttribute will have no effect. The attribute is only effective on a parameter of type CancellationToken in an async-iterator method returning IAsyncEnumerable
+        IAsyncEnumerable<string> GetIPAddresses([EnumeratorCancellation] CancellationToken cancellationToken = default);
+#pragma warning restore CS8424 // The EnumeratorCancellationAttribute will have no effect. The attribute is only effective on a parameter of type CancellationToken in an async-iterator method returning IAsyncEnumerable
     }
 }
