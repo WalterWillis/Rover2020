@@ -1,4 +1,5 @@
-﻿using RoverMobileGrpcClient;
+﻿using RoverMobile.Models;
+using RoverMobileGrpcClient;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +16,7 @@ namespace RoverMobile.ViewModels
         private int speedIncrement = 10;
         private List<string> displayVariants;
         private Status connectionStatus;
-        private string ipHost = "10.0.2.2:5443";
+        private Item ipHost = new Item() { Id = Guid.NewGuid().ToString() };
 
 
         private Client client;
@@ -31,7 +32,7 @@ namespace RoverMobile.ViewModels
         public Status ConnectionStatus
         { get => connectionStatus; set => SetProperty(ref connectionStatus, value); }
 
-        public string IPHost
+        public Item IPHost
         { get => ipHost; set => SetProperty(ref ipHost, value); }
 
         public ControllerViewModel(int speed = 100, int minimum = 0, int maximum = 255,
@@ -53,8 +54,11 @@ namespace RoverMobile.ViewModels
 
             startTask = Task.Run(async () =>
             {
-                await client.CreateNewConnection(IPHost);
-                if (await client.HeartBeat())
+                await UseSelectedItem();
+
+                await client.CreateNewConnection(IPHost.Text);
+
+                if (!string.IsNullOrEmpty(IPHost.Text) && await client.HeartBeat())
                 {
                     ConnectionStatus = Status.Connected;
                 }
@@ -63,6 +67,20 @@ namespace RoverMobile.ViewModels
                     ConnectionStatus = Status.Disconnected;
                 }
             });
+        }
+
+        private async Task UseSelectedItem()
+        {
+            var item = await DataStore.GetSelectedItem();
+
+            if (item != null)
+                IPHost = item;
+        }
+
+        public async Task ChangeItem()
+        {
+            await UseSelectedItem();
+            await ChangeHost();
         }
 
         public async Task PowerOffDevice()
@@ -138,7 +156,13 @@ namespace RoverMobile.ViewModels
 
         public async Task ChangeHost()
         {
-            await client.CreateNewConnection(IPHost);
+            await client.CreateNewConnection(IPHost.Text);
+
+            if (await DataStore.GetItemAsync(IPHost.Id) == null)
+                await DataStore.AddItemAsync(IPHost);
+            else
+                await DataStore.UpdateItemAsync(IPHost);
+
             await CheckConnection();
         }
 

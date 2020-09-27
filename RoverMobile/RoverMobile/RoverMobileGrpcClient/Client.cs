@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
+using System.Threading;
 
 namespace RoverMobileGrpcClient
 {
@@ -52,6 +53,55 @@ namespace RoverMobileGrpcClient
             {
                 Debug.WriteLine("Failed to create a new connection!");
             }
+        }
+
+        /// <summary>
+        /// Used to test connections to hosts
+        /// </summary>
+        /// <returns></returns>
+        public async static Task<bool> TryConnection(string host)
+        {
+            bool canConnect = false;
+            try
+            {
+                Uri uri = new Uri($"https://{host}");
+
+                GrpcChannel tempChannel = GrpcChannel.ForAddress(uri.AbsoluteUri, new GrpcChannelOptions
+                {
+                    //Let's use a client in case there's more we want to add later
+                    HttpClient = new HttpClient(
+                        new GrpcWebHandler(
+                            new HttpClientHandler()
+                            {
+                                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
+                                {
+                                    return true;
+                                }
+                            }
+                        )
+                    )
+                });
+
+                Controller.ControllerClient client = new Controller.ControllerClient(tempChannel);
+                CancellationTokenSource source = new CancellationTokenSource();
+                int timeLimit = 50; // give some time in ms. Shouldn't need long.
+                source.CancelAfter(timeLimit);
+                CancellationToken token = source.Token;
+
+                HeartbeatReply reply = await Task.Run( () => 
+                { 
+                    return client.Heartbeat(new HeartbeatEcho()); 
+                }, token);
+
+                if (reply != null)
+                    canConnect = true;
+            }
+            catch (Exception ex)
+            {
+                // ignore
+            }
+
+            return canConnect;
         }
 
         public async Task<bool> Move(int direction, int speed)

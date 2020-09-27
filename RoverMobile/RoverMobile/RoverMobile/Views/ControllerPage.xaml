@@ -55,7 +55,7 @@
             <Expander Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
                 <Expander.Header>
                     <!--Placehold the emulator localhost value-->
-                    <Entry x:Name="hostEntry" Text="{Binding IPHost, Mode=TwoWay}" 
+                    <Entry x:Name="hostEntry" Text="{Binding IPHost.Text, Mode=TwoWay}" 
                            BackgroundColor="AliceBlue" Keyboard="Text" Completed="hostEntry_Completed" />
                 </Expander.Header>
             </Expander>

@@ -123,10 +123,11 @@ namespace RoverMobile.Views
         #region Android View Changes
         /* Source: https://heartbeat.fritz.ai/force-an-orientation-on-a-single-page-in-xamarin-forms-b9c0c5295367 */
 
-        protected override void OnAppearing()
+        protected async override void OnAppearing()
         {
             base.OnAppearing();
             hostEntry.Completed += hostEntry_Completed;
+            await viewModel.ChangeItem();
             //viewModel.Enable();
             //MessagingCenter.Send(this, "AllowLandscape");
         }
@@ -141,7 +142,7 @@ namespace RoverMobile.Views
         #endregion
 
         private async void hostEntry_Completed(object sender, EventArgs e)
-        {
+        {            
             await viewModel.ChangeHost();
         }
     }
