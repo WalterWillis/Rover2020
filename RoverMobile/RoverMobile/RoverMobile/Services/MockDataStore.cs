@@ -14,12 +14,16 @@ namespace RoverMobile.Services
     public class MockDataStore : IDataStore<Item>
     {
         private List<Item> items;
-        private Task dataFillTask;
+        private Task<bool> dataFillTask; //used to keep track of the async task. Can be used for refresh logic.
         private Item selectedItem;
 
         public MockDataStore()
         {
-            dataFillTask = GetIPAddresses(); 
+            if (items == null)
+            {
+                items = new List<Item>();
+                dataFillTask = GetIPAddresses();
+            }
         }
 
         public async Task<bool> AddItemAsync(Item item)
@@ -63,6 +67,8 @@ namespace RoverMobile.Services
 
         public async Task<IEnumerable<Item>> GetItemsAsync(bool forceRefresh = false)
         {
+            if (forceRefresh)
+                Refresh();
             return await Task.FromResult(items);
         }
 
@@ -72,7 +78,7 @@ namespace RoverMobile.Services
                 dataFillTask = GetIPAddresses();
         }
 
-        private async Task<IEnumerable<Item>> GetIPAddresses()
+        private async Task<bool> GetIPAddresses()
         {
             var _interface = NetworkInterface
                            .GetAllNetworkInterfaces()
@@ -118,7 +124,10 @@ namespace RoverMobile.Services
             IPAddress networkAddr = new IPAddress(networkAddrBytes);
             IPAddress networkBroadcastAddr = new IPAddress(broadcast);
 
-            items = new List<Item>();
+            List<string> currentItems = new List<string>();
+
+            foreach (Item item in items)
+                currentItems.Add(item.Text); //add the current list of IPs to our checklist so we don't waste time or get redundant IPs.
 
             IPAddress currentAttempt = GetNextIpAddress(networkAddr);
             currentAttempt = GetNextIpAddress(currentAttempt); // skip default gateway, assuming typical network
@@ -129,35 +138,43 @@ namespace RoverMobile.Services
 
             for (int i = 0; i < hostPossibilities; i++)
             {
-                bool success = await Client.TryConnection(currentAttempt.ToString() + ":5443");
+                string host = currentAttempt.ToString() + ":5443";
 
-                if(success)
-                {
-                    items.Add(new Item() 
-                    { 
-                         Description = currentAttempt.ToString(),
-                         Id = Guid.NewGuid().ToString(),
-                         Text = currentAttempt.ToString() + ":5443"
-                    });
+                if (!currentItems.Contains(host))
+                {                   
+                    bool success = await Client.TryConnection(host);
+
+                    if (success)
+                    {
+                        items.Add(new Item()
+                        {
+                            Description = currentAttempt.ToString(),
+                            Id = Guid.NewGuid().ToString(),
+                            Text = host
+                        });
+                    }
                 }
-
                 currentAttempt = GetNextIpAddress(currentAttempt);
             }
 
 #if DEBUG
             //try the emulator address
-            if (await Client.TryConnection("10.0.2.2:5443"))
+            string debugHost = "10.0.2.2:5443";
+            if (await Client.TryConnection(debugHost))
             {
-                items.Add(new Item()
+                if (!currentItems.Contains(debugHost))
                 {
-                    Description = "DEBUG address",
-                    Id = Guid.NewGuid().ToString(),
-                    Text = "10.0.2.2:5443"
-                });
+                    items.Add(new Item()
+                    {
+                        Description = "DEBUG address",
+                        Id = Guid.NewGuid().ToString(),
+                        Text = debugHost
+                    });
+                }
             }
-
 #endif
-            return items;
+
+            return true;
         }
 
         private IPAddress GetNextIpAddress(IPAddress ipAddress)
