@@ -1,0 +1,15 @@
+Requires Microsoft.Extensions.Hosting and Microsoft.Extensions.Hosting.Systemd packages.
+
+Install .service file to /etc/systemd/system/ directory
+
+[Unit]
+Description=Grpc Service for Remote Rover Controls
+
+[Service]
+WorkingDirectory=/home/pi/Documents/RoverServer
+ExecStart=/usr/bin/dotnet /home/pi/Documents/RoverServer/GrpcController.dll
+SyslogIdentifier=RoverService
+User=pi
+
+[Install]
+WantedBy=multi-user.target
