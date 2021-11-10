@@ -131,8 +131,8 @@ namespace ControllerUI.ViewModels
             await CheckConnection();
 
             if (ConnectionStatus.Equals(Status.Connected))
-            {                
-                await client.MoveAsync(new MoveRequest { Speed = Speed, 
+            {
+                MoveReply reply = await client.MoveAsync(new MoveRequest { Speed = Speed, 
                         //Convert the UI enum to the grpc enum
                         Direction = (GrpcController.Direction)((int)direction) });
                 System.Diagnostics.Debug.WriteLine("Moving " + direction.ToString());
